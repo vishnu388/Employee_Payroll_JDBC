@@ -13,7 +13,7 @@ public class EmployeePayrollServiceTest {
 	public void given3EmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount(){
 		employeePayrollService = new EmployeePayrollService();
 		employeePayrollList = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-		Assert.assertEquals(3, employeePayrollList.size());
+		Assert.assertEquals(4, employeePayrollList.size());
 	}
 	@Test
 	public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch() {
@@ -39,7 +39,7 @@ public class EmployeePayrollServiceTest {
 		LocalDate startDate = LocalDate.of(2018, 01, 01);
 		LocalDate endDate = LocalDate.now();
 		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollDataForDateRange(startDate, endDate);
-		Assert.assertEquals(3, employeePayrollList.size());
+		Assert.assertEquals(4, employeePayrollList.size());
 	}
 
 	@Test
@@ -59,6 +59,14 @@ public class EmployeePayrollServiceTest {
 		System.out.println(employeePayrollService.minSalaryByGender());
 		boolean actual=employeePayrollService.minSalaryByGender() != null;
 		Assert.assertTrue(actual);
+	}
+	@Test
+	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB(){
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+		employeePayrollService.addEmployeeToPayroll(4,"Mark", 5000000.0, LocalDate.now(), "M");
+		boolean op = employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
+		Assert.assertTrue(op);
 	}
 
 }

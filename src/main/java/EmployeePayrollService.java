@@ -9,23 +9,19 @@ public class EmployeePayrollService {
     public EmployeePayrollService() {
         employeePayrollDBService = EmployeePayrollDBService.getInstance();
     }
-
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
         this();
         this.employeePayrollList = employeePayrollList;
     }
-
     public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService) {
         if (ioService.equals(IOService.DB_IO))
             this.employeePayrollList = employeePayrollDBService.readData();
         return this.employeePayrollList;
     }
-
     public boolean checkEmployeePayrollInSyncWithDB(String name) {
         List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
         return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
     }
-
     public void updateEmployeeSalary(String name, Double salary) {
         int result = employeePayrollDBService.updateEmployeeData(name, salary);
         if (result == 0) return;
@@ -54,10 +50,14 @@ public class EmployeePayrollService {
     public List<EmployeePayrollData> readEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate) {
         return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);
     }
+
     public List<String> minSalaryByGender() {
         return employeePayrollDBService.getSumByGender();
     }
     public Map<String, Double> averageSalaryByGender() {
         return employeePayrollDBService.getAverageSalaryByGender();
+    }
+    public void addEmployeeToPayroll(int id,String name, double salary, LocalDate start, String gender) {
+        employeePayrollList.add(employeePayrollDBService.addEmployeePayroll(id,name, salary, start, gender));
     }
 }
