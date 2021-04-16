@@ -1,12 +1,11 @@
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollService {
     public enum IOService {DB_IO}
-
     private List<EmployeePayrollData> employeePayrollList;
     private final EmployeePayrollDBService employeePayrollDBService;
-
     public EmployeePayrollService() {
         employeePayrollDBService = EmployeePayrollDBService.getInstance();
     }
@@ -54,5 +53,11 @@ public class EmployeePayrollService {
 
     public List<EmployeePayrollData> readEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate) {
         return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);
+    }
+    public List<String> minSalaryByGender() {
+        return employeePayrollDBService.getSumByGender();
+    }
+    public Map<String, Double> averageSalaryByGender() {
+        return employeePayrollDBService.getAverageSalaryByGender();
     }
 }

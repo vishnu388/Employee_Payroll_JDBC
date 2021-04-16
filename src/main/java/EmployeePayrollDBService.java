@@ -1,7 +1,9 @@
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollDBService {
 	private static EmployeePayrollDBService employeePayrollDBService;
@@ -12,12 +14,12 @@ public class EmployeePayrollDBService {
 
 	private EmployeePayrollDBService() {
 	}
+
 	public static EmployeePayrollDBService getInstance() {
 		if (employeePayrollDBService == null)
 			employeePayrollDBService = new EmployeePayrollDBService();
 		return employeePayrollDBService;
 	}
-
 	private Connection getConnection() throws SQLException {
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service1";
 		String userName = "root";
@@ -28,7 +30,6 @@ public class EmployeePayrollDBService {
 		System.out.println("Connection is successful!" + connection);
 		return connection;
 	}
-
 	public List<EmployeePayrollData> readData() {
 		String sql = "SELECT * FROM employee_payroll; ";
 		return this.getEmployeePayrollDataUsingDB(sql);
@@ -136,5 +137,38 @@ public class EmployeePayrollDBService {
 			e.printStackTrace();
 		}
 		return employeePayrollList;
+	}
+
+	public List<String> getSumByGender(){
+		String sql="SELECT salary,MIN(salary) FROM employee_payroll where gender='F' GROUP BY gender";
+		List<String> genderAverageGenderMap = new ArrayList<>();
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				String minSalary = resultSet.getString("salary");
+				genderAverageGenderMap.add(minSalary);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return genderAverageGenderMap;
+	}
+	public Map<String, Double> getAverageSalaryByGender() {
+		String sql = "SELECT gender, AVG(salary) as avg_salary FROM employee_payroll GROUP BY gender;";
+		Map<String, Double> genderAverageSalaryMap = new HashMap<>();
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				String gender = resultSet.getString("gender");
+				double salary = resultSet.getDouble("avg_salary");
+				genderAverageSalaryMap.put(gender, salary);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return genderAverageSalaryMap;
 	}
 }
